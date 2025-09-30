@@ -63,3 +63,14 @@ vim.api.nvim_create_autocmd("WinEnter", {
     end
   end,
 })
+
+vim.api.nvim_create_autocmd("ColorScheme", {
+  pattern = "*",
+  callback = function()
+    vim.api.nvim_set_hl(0, "Normal", { bg = "none", ctermbg = "none" })
+    vim.api.nvim_set_hl(0, "NormalNC", { bg = "none", ctermbg = "none" })
+    vim.api.nvim_set_hl(0, "MsgArea", { bg = "none", ctermbg = "none" })
+    vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = "none", ctermbg = "none" })
+    vim.api.nvim_set_hl(0, "Pmenu", { bg = "none", ctermbg = "none" })
+  end,
+})
