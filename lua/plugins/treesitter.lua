@@ -21,6 +21,7 @@ return {
       "typescript",
       "vim",
       "vimdoc",
+      "xml",
     },
     highlight = {
       enable = true,
