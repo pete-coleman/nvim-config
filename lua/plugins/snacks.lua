@@ -3,6 +3,9 @@ return {
     "folke/snacks.nvim",
     lazy = false,
     priority = 1000,
+    dependencies = {
+      "folke/todo-comments.nvim",
+    },
     opts = {
       bufdelete = {},
       dashboard = {
@@ -155,13 +158,6 @@ return {
           desc = "Search registers",
         },
         {
-          "<leader>s/",
-          function()
-            snacks.picker.search_history()
-          end,
-          desc = "Search history",
-        },
-        {
           "<leader>sa",
           function()
             snacks.picker.autocmds()
@@ -307,6 +303,13 @@ return {
             snacks.picker.lsp_workspace_symbols()
           end,
           desc = "Workspace symbols",
+        },
+        {
+          "<leader>st",
+          function()
+            snacks.picker.todo_comments()
+          end,
+          desc = "Todo comments",
         },
       }
     end,
