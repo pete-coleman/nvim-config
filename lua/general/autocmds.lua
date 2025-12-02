@@ -48,13 +48,22 @@ vim.api.nvim_create_autocmd("WinEnter", {
   end,
 })
 
-vim.api.nvim_create_autocmd("ColorScheme", {
+vim.api.nvim_create_autocmd("BufWinLeave", {
+  desc = "Save fold state when leaving buffer",
   pattern = "*",
   callback = function()
-    vim.api.nvim_set_hl(0, "Normal", { bg = "none", ctermbg = "none" })
-    vim.api.nvim_set_hl(0, "NormalNC", { bg = "none", ctermbg = "none" })
-    vim.api.nvim_set_hl(0, "MsgArea", { bg = "none", ctermbg = "none" })
-    vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = "none", ctermbg = "none" })
-    vim.api.nvim_set_hl(0, "Pmenu", { bg = "none", ctermbg = "none" })
+    if vim.bo.buftype == "" and vim.bo.filetype ~= "" then
+      vim.cmd "silent! mkview"
+    end
+  end,
+})
+
+vim.api.nvim_create_autocmd("BufWinEnter", {
+  desc = "Restore fold state when entering buffer",
+  pattern = "*",
+  callback = function()
+    if vim.bo.buftype == "" and vim.bo.filetype ~= "" then
+      vim.cmd "silent! loadview"
+    end
   end,
 })
