@@ -48,6 +48,30 @@ vim.api.nvim_create_autocmd("WinEnter", {
   end,
 })
 
+vim.api.nvim_create_autocmd("ColorScheme", {
+  desc = "Underline diagnostics",
+  pattern = "*",
+  callback = function()
+    local function get_hl_color(group, fallback)
+      local color = vim.fn.synIDattr(vim.fn.hlID(group), "fg", "gui")
+      if color == "" or not color:match "^#%x%x%x%x%x%x$" then
+        return fallback
+      end
+      return color
+    end
+
+    local error_color = get_hl_color("DiagnosticError", "#e67e80")
+    local warn_color = get_hl_color("DiagnosticWarn", "#dbbc7f")
+    local info_color = get_hl_color("DiagnosticInfo", "#7fbbb3")
+    local hint_color = get_hl_color("DiagnosticHint", "#a7c080")
+
+    vim.api.nvim_set_hl(0, "DiagnosticUnderlineError", { underline = true, sp = error_color })
+    vim.api.nvim_set_hl(0, "DiagnosticUnderlineWarn", { underline = true, sp = warn_color })
+    vim.api.nvim_set_hl(0, "DiagnosticUnderlineInfo", { underline = true, sp = info_color })
+    vim.api.nvim_set_hl(0, "DiagnosticUnderlineHint", { underline = true, sp = hint_color })
+  end,
+})
+
 vim.api.nvim_create_autocmd("BufWinLeave", {
   desc = "Save fold state when leaving buffer",
   pattern = "*",
