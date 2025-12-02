@@ -32,22 +32,6 @@ vim.api.nvim_create_autocmd("VimEnter", {
   end,
 })
 
-vim.api.nvim_create_autocmd("FileType", {
-  desc = "Add netrw keybinds",
-  pattern = "netrw",
-  callback = function()
-    local snacks = require "snacks"
-    vim.keymap.set("n", "<Esc>", snacks.bufdelete.delete, {
-      buffer = true,
-      desc = "Close netrw",
-    })
-    vim.keymap.set("n", "\\", snacks.bufdelete.delete, {
-      buffer = true,
-      desc = "Close netrw",
-    })
-  end,
-})
-
 vim.api.nvim_create_autocmd("WinEnter", {
   desc = "Add diffview keybinds",
   callback = function()

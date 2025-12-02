@@ -1,3 +1,7 @@
+-- Disable netrw for oil.nvim
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 for _, plugin in ipairs {
   "2html_plugin",
   "getscript",

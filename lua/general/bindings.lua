@@ -23,9 +23,3 @@ end, { desc = "Show errors in qflist" })
 vim.keymap.set("n", "<leader>qw", function()
   vim.diagnostic.setqflist { severity = vim.diagnostic.severity.WARN }
 end, { desc = "Show warnings in qflist" })
-
--- Netrw
-vim.keymap.set("n", "\\", "<cmd>Ex<CR>", { desc = "Open netrw" })
-vim.keymap.set("n", "<C-\\>", function()
-  vim.cmd("Ex " .. vim.fn.getcwd())
-end, { desc = "Open netrw at cwd" })
