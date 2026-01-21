@@ -13,8 +13,10 @@ local config = {
   lsp_servers = {
     "clangd",
     -- "copilot",
+    "gopls",
     "lua_ls",
     "omnisharp",
+    "phpactor",
     "powershell_es",
     "sqlls",
     "ts_ls",
