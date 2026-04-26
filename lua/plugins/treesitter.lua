@@ -17,6 +17,8 @@ return {
       "markdown_inline",
       "php",
       "powershell",
+      "python",
+      "rust",
       "query",
       "regex",
       "sql",

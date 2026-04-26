@@ -53,9 +53,9 @@ return {
         navic.attach(client, bufnr)
       end
 
-      --Semantic tokens
-      features["semanticTokensProvider"] = function(client, bufnr)
-        vim.lsp.semantic_tokens.start(bufnr, client.id)
+      -- Semantic tokens
+      features["semanticTokensProvider"] = function(_, bufnr)
+        vim.lsp.semantic_tokens.enable(true, { bufnr = bufnr })
       end
 
       -- Inlay hints
@@ -80,20 +80,10 @@ return {
 
       -- Code lens
       if opts.codelens.enabled and vim.lsp.codelens then
-        features["codeLensProvider"] = function(client, bufnr)
-          vim.lsp.codelens.refresh()
-          vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
-            buffer = bufnr,
-            callback = function()
-              if vim.g.codelens_enabled then
-                vim.lsp.codelens.refresh { bufnr }
-              else
-                vim.lsp.codelens.clear(client.id, bufnr)
-              end
-            end,
-          })
+        features["codeLensProvider"] = function(_, bufnr)
+          vim.lsp.codelens.enable(true, { bufnr = bufnr })
           vim.keymap.set("n", "<leader>uc", function()
-            vim.g.codelens_enabled = not vim.g.codelens_enabled
+            vim.lsp.codelens.enable(not vim.lsp.codelens.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
           end, { buffer = bufnr, desc = "Toggle codelens" })
         end
       end

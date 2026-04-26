@@ -15,6 +15,8 @@ local config = {
     -- "copilot",
     "gopls",
     "lua_ls",
+    "pyright",
+    "rust_analyzer",
     "omnisharp",
     "phpactor",
     "powershell_es",

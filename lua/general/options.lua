@@ -66,9 +66,6 @@ vim.opt.scrolloff = 8
 -- Don't use shada
 vim.opt.shadafile = "NONE"
 
--- Codelens control
-vim.g.codelens_enabled = true
-
 -- Folds
 vim.opt.foldlevel = 99
 vim.opt.foldlevelstart = 2
