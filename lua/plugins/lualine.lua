@@ -4,9 +4,6 @@ return {
     local lsp_indicator = {
       function()
         local clients = vim.lsp.get_clients { bufnr = vim.api.nvim_get_current_buf() }
-        clients = vim.tbl_filter(function(c)
-          return c.name ~= "copilot"
-        end, clients)
         if #clients == 0 then
           return "  No LSP"
         end
@@ -26,13 +23,6 @@ return {
       cond = function()
         return require("nvim-navic").is_available()
       end,
-    }
-    local pin_indicator = {
-      function()
-        local hbac = require "hbac"
-        return hbac.is_pinned(vim.api.nvim_get_current_buf()) and "" or ""
-      end,
-      color = { fg = "#ef5f6b", gui = "bold" },
     }
     require("lualine").setup {
       options = {
@@ -62,7 +52,7 @@ return {
           lsp_location,
         },
         lualine_x = { "filetype", lsp_indicator },
-        lualine_y = { pin_indicator },
+        lualine_y = {},
       },
       tabline = {},
       winbar = {},

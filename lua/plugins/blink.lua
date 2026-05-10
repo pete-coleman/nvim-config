@@ -2,17 +2,16 @@ return {
   "saghen/blink.cmp",
   version = "1.*",
   event = "InsertEnter",
-  build = "cargo build --release",
   dependencies = {
-    "L3MON4D3/LuaSnip",
+    "rafamadriz/friendly-snippets",
   },
   opts = {
-    fuzzy = { implementation = "prefer_rust_with_warning" },
+    fuzzy = { implementation = "rust" },
     keymap = {
       preset = "default",
     },
     signature = { enabled = true },
-    snippets = { preset = "luasnip" },
+    snippets = { preset = "default" },
     sources = {
       default = {
         "lsp",

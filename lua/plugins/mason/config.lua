@@ -12,12 +12,11 @@ local config = {
   },
   lsp_servers = {
     "clangd",
-    -- "copilot",
     "gopls",
     "lua_ls",
     "pyright",
     "rust_analyzer",
-    "omnisharp",
+    "roslyn",
     "phpactor",
     "powershell_es",
     "sqlls",

@@ -16,23 +16,11 @@ local function netcoredbg()
       name = "Launch file",
       request = "launch",
       program = function()
-        local dll_info = require("easy-dotnet").get_debug_dll()
-        print(vim.inspect(dll_info))
-        if not dll_info or not dll_info.dll_path then
-          vim.notify("No debug DLL found", vim.log.levels.WARN)
-          return vim.fn.tempname()
-        end
-        vim.notify("Starting debugger using " .. dll_info.dll_path, 1)
-
-        return dll_info.dll_path
+        return vim.fn.input("Path to DLL: ", vim.fn.getcwd() .. "/", "file")
       end,
       env = {
         ASPNETCORE_ENVIRONMENT = "Development",
       },
-      preLaunchTask = function()
-        -- local dotnet = require "easy-dotnet"
-        -- dotnet.build_solution()
-      end,
     },
   }
 end

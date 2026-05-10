@@ -1,3 +1,29 @@
+vim.api.nvim_create_autocmd("FileType", {
+  desc = "Enable treesitter highlighting and indentation",
+  group = vim.api.nvim_create_augroup("treesitter-start", { clear = true }),
+  callback = function(args)
+    local buf = args.buf
+    -- Schedule to avoid timing issues when the event fires during startup
+    vim.schedule(function()
+      if not vim.api.nvim_buf_is_valid(buf) then return end
+      pcall(vim.treesitter.start, buf)
+      if pcall(require, "nvim-treesitter") then
+        vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+      end
+    end)
+  end,
+})
+
+-- LspTokenUpdate fires after nvim has actually applied semantic tokens to the buffer,
+-- so this is the correct moment to flush (unlike LspProgress which fires too early).
+vim.api.nvim_create_autocmd("LspTokenUpdate", {
+  desc = "Flush display after semantic tokens are applied to a buffer",
+  callback = function()
+    vim.cmd("redraw!")
+  end,
+})
+
+
 vim.api.nvim_create_autocmd("TextYankPost", {
   desc = "Highlight when yanking (copying) text",
   group = vim.api.nvim_create_augroup("highlight-yank", { clear = true }),
@@ -28,22 +54,6 @@ vim.api.nvim_create_autocmd("VimEnter", {
     local arg = vim.fn.argv()
     if #arg == 1 and vim.fn.isdirectory(arg[1]) == 1 then
       require("snacks").dashboard()
-    end
-  end,
-})
-
-vim.api.nvim_create_autocmd("WinEnter", {
-  desc = "Add diffview keybinds",
-  callback = function()
-    local win = vim.api.nvim_get_current_win()
-    local buf = vim.api.nvim_win_get_buf(win)
-    local bufname = vim.api.nvim_buf_get_name(buf)
-
-    if bufname:match "diffview" then
-      vim.keymap.set("n", "<Esc>", "<cmd>DiffviewClose<CR>", {
-        buffer = true,
-        desc = "Close Diffview",
-      })
     end
   end,
 })

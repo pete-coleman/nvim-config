@@ -1,5 +1,18 @@
 return {
   "sindrets/diffview.nvim",
+  opts = {
+    keymaps = {
+      view = {
+        { "n", "<Esc>", "<cmd>DiffviewClose<CR>", { desc = "Close Diffview" } },
+      },
+      file_panel = {
+        { "n", "<Esc>", "<cmd>DiffviewClose<CR>", { desc = "Close Diffview" } },
+      },
+      file_history_panel = {
+        { "n", "<Esc>", "<cmd>DiffviewClose<CR>", { desc = "Close Diffview" } },
+      },
+    },
+  },
   keys = {
     {
       "<leader>dh",

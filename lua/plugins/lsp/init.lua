@@ -1,7 +1,7 @@
 return {
   {
     "neovim/nvim-lspconfig",
-    depdendencies = {
+    dependencies = {
       "SmiteshP/nvim-navic",
     },
     opts = function()
@@ -62,7 +62,7 @@ return {
       if opts.inlay_hints.enabled then
         features["inlayHintProvider"] = function(_, bufnr)
           if vim.api.nvim_buf_is_valid(bufnr) and vim.bo[bufnr].buftype == "" and not vim.tbl_contains(opts.inlay_hints.exclude, vim.bo[bufnr].filetype) then
-            vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+            vim.lsp.inlay_hint.enable(false, { bufnr = bufnr })
             vim.keymap.set("n", "<leader>ui", function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = bufnr }, { bufnr = bufnr })
             end, { buffer = bufnr, desc = "Toggle inlay hints" })
@@ -72,20 +72,28 @@ return {
 
       -- Folds
       if opts.folds.enabled then
-        features["foldingRangeProvider"] = function(_, _)
-          vim.o.foldmethod = "expr"
-          vim.o.foldexpr = "v:lua.vim.lsp.foldexpr()"
+        features["foldingRangeProvider"] = function(_, bufnr)
+          if vim.api.nvim_buf_is_valid(bufnr) then
+            local win = vim.fn.bufwinid(bufnr)
+            if win ~= -1 then
+              vim.wo[win].foldmethod = "expr"
+              vim.wo[win].foldexpr = "v:lua.vim.lsp.foldexpr()"
+            end
+          end
         end
       end
 
       -- Code lens
       if opts.codelens.enabled and vim.lsp.codelens then
         features["codeLensProvider"] = function(_, bufnr)
+          -- enable() manages automatic refresh in nvim 0.12; refresh() is deprecated
           vim.lsp.codelens.enable(true, { bufnr = bufnr })
           vim.keymap.set("n", "<leader>uc", function()
             vim.lsp.codelens.enable(not vim.lsp.codelens.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
           end, { buffer = bufnr, desc = "Toggle codelens" })
         end
+
+        -- nvim 0.12 renders codelens as virt_lines above the code line (indented to the code column).
       end
 
       -- Diagnostics
@@ -100,7 +108,7 @@ return {
         callback = function(args)
           local bufnr = args.buf
           local client = vim.lsp.get_client_by_id(args.data.client_id)
-          if not client or client.name == "copilot" then
+          if not client then
             return
           end
 
@@ -116,20 +124,26 @@ return {
               setup(client, bufnr)
             end
           end
+
+          -- nvim 0.12 schedules codelens redraws with flush=false so they never appear
+          -- without user input. LspTokenUpdate (autocmds.lua) handles semantic tokens.
+          -- This flush fires after the initial LSP responses settle.
+          vim.defer_fn(function()
+            if vim.api.nvim_buf_is_valid(bufnr) then
+              vim.cmd("redraw!")
+            end
+          end, 1500)
         end,
       })
     end),
   },
   {
-    "Hoffs/omnisharp-extended-lsp.nvim",
-    keys = {
-      {
-        "ged",
-        function()
-          require("omnisharp_extended").lsp_definition()
-        end,
-        desc = "Goto external definition",
-      },
+    "seblyng/roslyn.nvim",
+    ft = "cs",
+    opts = {
+      broad_search = true,
+      lock_target = true,
+      filewatching = "roslyn",
     },
   },
 }

@@ -1,38 +1,11 @@
+-- nvim-treesitter was rewritten for Neovim 0.12 with a new API.
+-- Highlighting is now built into Neovim via vim.treesitter.start() (see autocmds.lua).
+-- Indentation is now opt-in per filetype via vim.bo.indentexpr (see autocmds.lua).
+-- Parsers are installed via :TSInstall / :TSUpdate and require the tree-sitter CLI:
+--   brew install tree-sitter   (macOS)
+--   npm install -g tree-sitter-cli
 return {
   "nvim-treesitter/nvim-treesitter",
+  lazy = false,
   build = ":TSUpdate",
-  opts = {
-    auto_install = true,
-    ensure_installed = {
-      "c",
-      "cpp",
-      "c_sharp",
-      "diff",
-      "go",
-      "html",
-      "javascript",
-      "lua",
-      "luadoc",
-      "markdown",
-      "markdown_inline",
-      "php",
-      "powershell",
-      "python",
-      "rust",
-      "query",
-      "regex",
-      "sql",
-      "typescript",
-      "vim",
-      "vimdoc",
-      "xml",
-    },
-    highlight = {
-      enable = true,
-    },
-    ignore_install = {},
-    indent = { enable = true },
-    modules = {},
-    sync_install = false,
-  },
 }

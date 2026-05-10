@@ -1,11 +1,11 @@
 return {
   "MeanderingProgrammer/render-markdown.nvim",
-  ft = { "codecompanion", "gitcommit", "markdown" },
+  enabled = vim.fn.has "win32" == 0,
+  ft = { "gitcommit", "markdown" },
   opts = {
-    completions = { lsp = { enabled = true } },
     render_modes = { "n", "c", "t" },
     anti_conceal = {
-      enabled = true, -- Prevent conceal on cursor line
+      enabled = true,
       disabled_modes = false,
       above = 0,
       below = 0,
