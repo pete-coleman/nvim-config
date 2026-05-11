@@ -1,6 +1,5 @@
 return {
   "MeanderingProgrammer/render-markdown.nvim",
-  enabled = vim.fn.has "win32" == 0,
   ft = { "gitcommit", "markdown" },
   opts = {
     render_modes = { "n", "c", "t" },
