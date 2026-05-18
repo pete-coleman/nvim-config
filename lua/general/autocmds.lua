@@ -1,3 +1,23 @@
+-- Roslyn only supports pull diagnostics; Neovim doesn't pull often enough
+-- so diagnostics can go stale after fixing errors. Force a refresh on common events.
+vim.api.nvim_create_autocmd({ "InsertLeave", "BufWritePost" }, {
+  desc = "Refresh Roslyn pull diagnostics",
+  group = vim.api.nvim_create_augroup("roslyn-diagnostics", { clear = true }),
+  pattern = "*.cs",
+  callback = function()
+    local clients = vim.lsp.get_clients({ name = "roslyn" })
+    if #clients == 0 then
+      return
+    end
+
+    local client = clients[1]
+    for buf in pairs(client.attached_buffers) do
+      local params = { textDocument = vim.lsp.util.make_text_document_params(buf) }
+      client:request("textDocument/diagnostic", params, nil, buf)
+    end
+  end,
+})
+
 vim.api.nvim_create_autocmd("FileType", {
   desc = "Enable treesitter highlighting and indentation",
   group = vim.api.nvim_create_augroup("treesitter-start", { clear = true }),
@@ -18,11 +38,11 @@ vim.api.nvim_create_autocmd("FileType", {
 -- so this is the correct moment to flush (unlike LspProgress which fires too early).
 vim.api.nvim_create_autocmd("LspTokenUpdate", {
   desc = "Flush display after semantic tokens are applied to a buffer",
+  group = vim.api.nvim_create_augroup("lsp-token-redraw", { clear = true }),
   callback = function()
     vim.cmd("redraw!")
   end,
 })
-
 
 vim.api.nvim_create_autocmd("TextYankPost", {
   desc = "Highlight when yanking (copying) text",
@@ -44,12 +64,14 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
 })
 
 vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
-  desc = "Auto reload files when their contents are change by an external source e.g. git",
+  desc = "Auto reload files when their contents are changed by an external source e.g. git",
+  group = vim.api.nvim_create_augroup("auto-reload", { clear = true }),
   command = "if mode() !~ '\v(c|r.?|!|t)' && getcmdwintype() == '' | checktime | endif",
 })
 
 vim.api.nvim_create_autocmd("VimEnter", {
   desc = "Open dashboard if nvim is opened with a directory instead of a file",
+  group = vim.api.nvim_create_augroup("dashboard-dir", { clear = true }),
   callback = function()
     local arg = vim.fn.argv()
     if #arg == 1 and vim.fn.isdirectory(arg[1]) == 1 then
@@ -60,6 +82,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 
 vim.api.nvim_create_autocmd("ColorScheme", {
   desc = "Underline diagnostics",
+  group = vim.api.nvim_create_augroup("diagnostic-underlines", { clear = true }),
   pattern = "*",
   callback = function()
     local function get_hl_color(group, fallback)
@@ -84,6 +107,7 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 
 vim.api.nvim_create_autocmd("BufWinLeave", {
   desc = "Save fold state when leaving buffer",
+  group = vim.api.nvim_create_augroup("save-folds", { clear = true }),
   pattern = "*",
   callback = function()
     if vim.bo.buftype == "" and vim.bo.filetype ~= "" then
@@ -94,6 +118,7 @@ vim.api.nvim_create_autocmd("BufWinLeave", {
 
 vim.api.nvim_create_autocmd("BufWinEnter", {
   desc = "Restore fold state when entering buffer",
+  group = vim.api.nvim_create_augroup("load-folds", { clear = true }),
   pattern = "*",
   callback = function()
     if vim.bo.buftype == "" and vim.bo.filetype ~= "" then

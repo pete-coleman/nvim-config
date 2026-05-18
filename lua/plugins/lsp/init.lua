@@ -143,7 +143,7 @@ return {
     opts = {
       broad_search = true,
       lock_target = true,
-      filewatching = "roslyn",
+      filewatching = "auto",
     },
   },
 }
