@@ -89,7 +89,7 @@ return {
           -- enable() manages automatic refresh in nvim 0.12; refresh() is deprecated
           vim.lsp.codelens.enable(true, { bufnr = bufnr })
           vim.keymap.set("n", "<leader>uc", function()
-            vim.lsp.codelens.enable(not vim.lsp.codelens.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
+            vim.lsp.codelens.enable(not vim.lsp.codelens.is_enabled { bufnr = bufnr }, { bufnr = bufnr })
           end, { buffer = bufnr, desc = "Toggle codelens" })
         end
 
@@ -102,6 +102,8 @@ return {
       if opts.capabilities then
         vim.lsp.config("*", { capabilities = opts.capabilities })
       end
+
+      vim.lsp.enable "roslyn_ls"
 
       vim.api.nvim_create_autocmd("LspAttach", {
         desc = "Unified LSP setup",
@@ -130,20 +132,11 @@ return {
           -- This flush fires after the initial LSP responses settle.
           vim.defer_fn(function()
             if vim.api.nvim_buf_is_valid(bufnr) then
-              vim.cmd("redraw!")
+              vim.cmd "redraw!"
             end
           end, 1500)
         end,
       })
     end),
-  },
-  {
-    "seblyng/roslyn.nvim",
-    ft = "cs",
-    opts = {
-      broad_search = true,
-      lock_target = true,
-      filewatching = "auto",
-    },
   },
 }

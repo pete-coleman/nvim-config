@@ -4,12 +4,7 @@ return {
   {
     "WhoIsSethDaniel/mason-tool-installer.nvim",
     dependencies = {
-      { "mason-org/mason.nvim", opts = {
-        registries = {
-          "github:mason-org/mason-registry",
-          "github:Crashdummyy/mason-registry",
-        },
-      } },
+      { "mason-org/mason.nvim", opts = {} },
       { "mason-org/mason-lspconfig.nvim", opts = {} },
       { "jay-babu/mason-nvim-dap.nvim", opts = {} },
     },

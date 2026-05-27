@@ -1,6 +1,13 @@
 local blink = require "blink-cmp"
+
 return {
-  capabilities = blink.get_lsp_capabilities(),
+  capabilities = vim.tbl_deep_extend("force", blink.get_lsp_capabilities(), {
+    workspace = {
+      didChangeWatchedFiles = {
+        dynamicRegistration = false,
+      },
+    },
+  }),
   settings = {
     ["csharp|inlay_hints"] = {
       -- Parameter hints
@@ -20,7 +27,6 @@ return {
     },
     ["csharp|code_lens"] = {
       dotnet_enable_references_code_lens = true,
-      dotnet_enable_tests_code_lens = true,
     },
     ["csharp|completion"] = {
       dotnet_show_completion_items_from_unimported_namespaces = true,

@@ -1,21 +1,36 @@
 -- Roslyn only supports pull diagnostics; Neovim doesn't pull often enough
--- so diagnostics can go stale after fixing errors. Force a refresh on common events.
-vim.api.nvim_create_autocmd({ "InsertLeave", "BufWritePost" }, {
-  desc = "Refresh Roslyn pull diagnostics",
-  group = vim.api.nvim_create_augroup("roslyn-diagnostics", { clear = true }),
-  pattern = "*.cs",
-  callback = function()
-    local clients = vim.lsp.get_clients({ name = "roslyn" })
-    if #clients == 0 then
-      return
-    end
+-- so diagnostics can go stale after fixing errors or before the first edit.
+local roslyn_diagnostics_group = vim.api.nvim_create_augroup("roslyn-diagnostics", { clear = true })
 
-    local client = clients[1]
-    for buf in pairs(client.attached_buffers) do
-      local params = { textDocument = vim.lsp.util.make_text_document_params(buf) }
-      client:request("textDocument/diagnostic", params, nil, buf)
+local function refresh_roslyn_diagnostics()
+  local clients = vim.lsp.get_clients({ name = "roslyn_ls" })
+  if #clients == 0 then
+    return
+  end
+
+  local client = clients[1]
+  for buf in pairs(client.attached_buffers) do
+    local params = { textDocument = vim.lsp.util.make_text_document_params(buf) }
+    client:request("textDocument/diagnostic", params, nil, buf)
+  end
+end
+
+vim.api.nvim_create_autocmd("LspAttach", {
+  desc = "Refresh Roslyn pull diagnostics on attach",
+  group = roslyn_diagnostics_group,
+  callback = function(args)
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    if client and client.name == "roslyn_ls" then
+      vim.schedule(refresh_roslyn_diagnostics)
     end
   end,
+})
+
+vim.api.nvim_create_autocmd({ "InsertLeave", "BufWritePost" }, {
+  desc = "Refresh Roslyn pull diagnostics",
+  group = roslyn_diagnostics_group,
+  pattern = "*.cs",
+  callback = refresh_roslyn_diagnostics,
 })
 
 vim.api.nvim_create_autocmd("FileType", {

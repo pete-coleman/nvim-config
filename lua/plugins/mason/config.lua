@@ -16,7 +16,6 @@ local config = {
     "lua_ls",
     "pyright",
     "rust_analyzer",
-    "roslyn",
     "phpactor",
     "powershell_es",
     "sqlls",
